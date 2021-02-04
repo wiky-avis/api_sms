@@ -9,11 +9,17 @@ load_dotenv()
 
 
 token = os.getenv('TOKEN_VK')
-# 1. отправляйте SMS-уведомление, когда определённый пользователь ВК появится в сети
+account_sid = os.getenv('ACCOUNT_SID')
+number_from = os.getenv('NUMBER_FROM')
+number_to = os.getenv('NUMBER_TO')
+
+client = Client(account_sid, token)
+# 1. отправляйте SMS-уведомление, когда определённый пользователь ВК появится 
+#   в сети
 # 2. Методом users.get получите статус пользователя в ВК
 # 3. Если пользователь онлайн — отправьте SMS посредством класса Client() из 
-#   библиотеки twilio.rest А если пользователь оффлайн — запросите его статус через 
-#   некоторое время. Метод time.sleep() вас выручит
+#   библиотеки twilio.rest А если пользователь оффлайн — запросите его статус 
+# через некоторое время. Метод time.sleep() вас выручит
 # 4. Номера телефонов храните в .env в переменных NUMBER_FROM и NUMBER_TO.
 def get_status(user_id):
     params = {
@@ -23,13 +29,19 @@ def get_status(user_id):
             'v': '5.126'
     }
     
-    friends_online = requests.post('https://api.vk.com/method/users.get', params=params)
-    return friends_online.json()['response']  # Верните статус пользователя в ВК
+    friends_online = requests.post(
+        'https://api.vk.com/method/users.get', params=params
+        )
+    return friends_online.json()['response']  #Верните статус пользователя в ВК
 
 
 def sms_sender(sms_text):
-    ...
-    return ...  # Верните sid отправленного сообщения из Twilio
+    sms_text = client.messages.create(
+        body='YandexPraktikumApp',
+        from_=number_from,
+        to=number_to
+        )
+    return sms_text.sid  # Верните sid отправленного сообщения из Twilio
 
 
 if __name__ == "__main__":
