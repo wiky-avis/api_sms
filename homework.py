@@ -12,27 +12,28 @@ token = os.getenv('TOKEN_VK')
 account_sid = os.getenv('ACCOUNT_SID')
 number_from = os.getenv('NUMBER_FROM')
 number_to = os.getenv('NUMBER_TO')
+version = os.getenv('V')
 
 client = Client(account_sid, token)
-# 1. отправляйте SMS-уведомление, когда определённый пользователь ВК появится 
-#   в сети
-# 2. Методом users.get получите статус пользователя в ВК
-# 3. Если пользователь онлайн — отправьте SMS посредством класса Client() из 
-#   библиотеки twilio.rest А если пользователь оффлайн — запросите его статус 
-# через некоторое время. Метод time.sleep() вас выручит
-# 4. Номера телефонов храните в .env в переменных NUMBER_FROM и NUMBER_TO.
+
+
 def get_status(user_id):
     params = {
             'user_ids': user_id,
-            'fields': 'online,verified',
+            'fields': 'online',
             'access_token': token,
-            'v': '5.126'
+            'v': version
     }
     
     friends_online = requests.post(
         'https://api.vk.com/method/users.get', params=params
         )
-    return friends_online.json()['response']  #Верните статус пользователя в ВК
+    try:
+        result = friends_online.json()['response']
+    except requests.exceptions.RequestException:
+        return 'Ошибка запроса'
+    status = result[0]['online']
+    return status  # Верните статус пользователя в ВК
 
 
 def sms_sender(sms_text):
