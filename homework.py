@@ -37,7 +37,7 @@ def get_status(user_id):
 
 def sms_sender(sms_text):
     sms_text = client.messages.create(
-        body='YandexPraktikumApp',
+        body='Сообщение от YandexPraktikum',
         from_=number_from,
         to=number_to
         )
