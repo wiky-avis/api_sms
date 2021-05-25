@@ -1,2 +1,2 @@
-# api_01_sms
-API 01 sms
+# api_sms
+API sms
